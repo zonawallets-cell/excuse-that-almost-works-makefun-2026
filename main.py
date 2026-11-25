@@ -26,13 +26,15 @@ MAX_WORDS = 20
 
 def validate(text):
     """Enforce the RULES.txt gate: UTF-8, 1-140 chars, not only whitespace,
-    a single line, and at most 20 words."""
+    a single line, at most 20 words, and no control characters."""
     if not isinstance(text, str):
         raise ValueError("entry must be text")
     if not text.strip():
         raise ValueError("entry must not be only whitespace")
     if "\n" in text or "\r" in text:
         raise ValueError("entry must be a single line")
+    if any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in text):
+        raise ValueError("entry must not contain control characters")
     if len(text) > MAX_CHARS:
         raise ValueError("entry is %d chars, over the 140-char limit" % len(text))
     if len(text.split()) > MAX_WORDS:
